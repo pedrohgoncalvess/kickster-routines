@@ -1,5 +1,6 @@
 from configs import get_var
 from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
 
 
 class DatabaseConnection:
@@ -12,6 +13,7 @@ class DatabaseConnection:
         self.__engine__ = create_engine(
             f"postgresql+psycopg2://{self.user}:{self.password}@{self.host}:{self.port}/{self.dbName}"
         )
+        self.session = Session(self.__engine__)
 
     def execute(self, raw_statement: str):
         with self.__engine__.connect() as connection:
