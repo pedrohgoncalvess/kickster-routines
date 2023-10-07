@@ -32,7 +32,7 @@ create table if not exists mtd.rounds (
 	id serial,
 	id_league_mtd integer not null,
 	"round" integer not null,
-	status varchar(9),
+	played integer not null,
 	updated_at timestamp default current_timestamp,
 	id_compost varchar(20) unique generated always as (generate_compost_id_metadata(id_league_mtd, "round")) stored,
 
