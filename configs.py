@@ -1,3 +1,4 @@
+import datetime
 import json
 
 from dotenv import load_dotenv
@@ -20,12 +21,5 @@ def get_headers():
     }
 
 
-def metadata_reader():
-    rootPath = root_path()
-    metadataFilePath = f"{rootPath}\\metadata.json"
-    with open(metadataFilePath, 'r') as file:
-        data = json.load(file)
-    return data
-
-
-
+def actual_season():
+    return datetime.datetime.now().year
