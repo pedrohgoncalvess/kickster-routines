@@ -36,7 +36,7 @@ class DatabaseConnection:
             session.close()
 
 
-    def leagues_metadata(self, id_league: int):
+    def leagues_metadata(self, id_league: int = 71):
         from database.raw_statements import leagues_metadata
 
         query = leagues_metadata(id_league)
@@ -46,19 +46,21 @@ class DatabaseConnection:
             listOfLeaguesMetadata.append(
                 {"id_league":result[0],"id_metadata":result[1],"total_rounds":result[3],"games_round":result[4]}
             )
-        return listOfLeaguesMetadata
+        return listOfLeaguesMetadata[0]
 
     def incomplet_rounds_metadata(self, id_league_metadata: int):
         from database.raw_statements import incompleted_rounds_metadata
 
         query = incompleted_rounds_metadata(id_league_metadata)
         results = self.execute(query)
+        dictRoundIncompleted = {"id_league_mtd":id_league_metadata}
         listOfRoundsIncompleted = []
         for result in results:
             listOfRoundsIncompleted.append(
-                {"id_league_mtd":result[1],"round":result[2]}
+                {"round":result[2],"games_played":result[3]}
             )
-        return listOfRoundsIncompleted
+        dictRoundIncompleted.update({"rounds":listOfRoundsIncompleted})
+        return dictRoundIncompleted
 
     def fixtures_played_round(self, id_league:int, season:int):
         from database.raw_statements import games_played_round
@@ -72,3 +74,14 @@ class DatabaseConnection:
                 {"round":result[0], "games_played":result[1]}
             )
         return listOfRounds
+
+    def fixtures_to_collect(self, _round:int, id_league:int, season:int):
+        from database.raw_statements import fixtures_to_collect_round
+
+        query = fixtures_to_collect_round(_round, id_league, season)
+        results = self.execute(query)
+
+        listOfFixtures = []
+        for result in results:
+            listOfFixtures.append(result[0])
+        return listOfFixtures
