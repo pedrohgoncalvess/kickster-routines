@@ -1,35 +1,52 @@
 from database.connection import DatabaseConnection
 from database.raw_statements import games_played_round, games_round
-from configs import metadata_reader
+from configs import actual_season
 
 
 def check_rounds_brasileirao():
     dbConnection = DatabaseConnection()
-    leaguesMetadata = metadata_reader()
+    leagueMetadata = dbConnection.leagues_metadata(71)[0]
 
-    idLeague = leaguesMetadata.get("id_league")
-    seasonLeague = leaguesMetadata.get("season")
-    gamesRoundLeague = leaguesMetadata.get("games_round")
+    idLeague = leagueMetadata.get("id_league")
+    seasonLeague = actual_season()
+    gamesRoundLeague = leagueMetadata.get("games_round")
+    idMetadata = leagueMetadata.get("id_metadata")
 
-    roundsPlayed = dbConnection.execute(games_played_round(idLeague, seasonLeague))
+    roundsPlayed = dbConnection.fixtures_played_round(idLeague, seasonLeague)
 
-    dictWithRounds = {"id_league": idLeague, "season": seasonLeague}
+    dictWithRounds = {"id_league": idLeague, "season": seasonLeague, "id_metadata":idMetadata, "games_per_round":gamesRoundLeague}
     listWithRounds = []
-    lastRoundPlayed = roundsPlayed[-1][0]
-    gamesPlayedInLastRound = roundsPlayed[-1][1]
-    for roundLeague in roundsPlayed:
-        gamesPlayedInRound = roundLeague[1]
-        actualRoundLeague = roundLeague[0]
-        listWithRounds.append({actualRoundLeague: gamesPlayedInRound})
+    lastRoundPlayed = roundsPlayed[-1].get('round')
+    gamesPlayedInLastRound = roundsPlayed[-1].get('games_played')
+    for roundNumber, roundLeague in enumerate(roundsPlayed, start=1):
+        gamesPlayedInRound = roundLeague.get("games_played")
+        listWithRounds.append({"rounds":roundNumber, "games_played":gamesPlayedInRound})
     if gamesPlayedInLastRound > (gamesRoundLeague * 0.7):
         listWithRounds.append({lastRoundPlayed + 1: 0})
     dictWithRounds.update({"rounds": listWithRounds})
     return dictWithRounds
 
 
-def fixtures_to_collect(round_games: dict[str:any]):
+def insert_metadata(rounds_games:dict[str:any]):
+    from database.models.mtd.mtd_rounds_model import RoundsMetadata
+    from database.connection import DatabaseConnection
+
     dbConnection = DatabaseConnection()
-    leaguesMetadata = metadata_reader()
+
+    gamesPerRound = rounds_games.get("games_per_round")
+    for roundNumber, roundGame in enumerate(rounds_games.get("rounds"), start=1):
+        newRoundMetadata = RoundsMetadata(
+            id_league_mtd=rounds_games.get("id_metadata"),
+            round=roundNumber,
+            status= 'completed' if roundGame.get(roundNumber) == gamesPerRound else 'incomplet'
+        )
+        dbConnection.execute_orm(newRoundMetadata)
+
+
+def fixtures_to_collect():
+    dbConnection = DatabaseConnection()
+    leaguesMetadata = dbConnection.leagues_metadata()
+    round_games = {}
 
     idLeague = leaguesMetadata.get("id_league")
     seasonLeague = leaguesMetadata.get("season")
