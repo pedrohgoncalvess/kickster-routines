@@ -1,11 +1,11 @@
+from sqlalchemy import select
 from database.connection import DatabaseConnection
-from database.raw_statements import games_played_round, games_round
 from configs import actual_season
 
 
 def check_rounds_brasileirao():
     dbConnection = DatabaseConnection()
-    leagueMetadata = dbConnection.leagues_metadata(71)[0]
+    leagueMetadata = dbConnection.leagues_metadata(71)
 
     idLeague = leagueMetadata.get("id_league")
     seasonLeague = actual_season()
@@ -20,9 +20,9 @@ def check_rounds_brasileirao():
     gamesPlayedInLastRound = roundsPlayed[-1].get('games_played')
     for roundNumber, roundLeague in enumerate(roundsPlayed, start=1):
         gamesPlayedInRound = roundLeague.get("games_played")
-        listWithRounds.append({"rounds":roundNumber, "games_played":gamesPlayedInRound})
+        listWithRounds.append({"round":roundNumber, "games_played":gamesPlayedInRound})
     if gamesPlayedInLastRound > (gamesRoundLeague * 0.7):
-        listWithRounds.append({lastRoundPlayed + 1: 0})
+        listWithRounds.append({"round": lastRoundPlayed+1, "games_played":0})
     dictWithRounds.update({"rounds": listWithRounds})
     return dictWithRounds
 
@@ -33,32 +33,39 @@ def insert_metadata(rounds_games:dict[str:any]):
 
     dbConnection = DatabaseConnection()
 
-    gamesPerRound = rounds_games.get("games_per_round")
     for roundNumber, roundGame in enumerate(rounds_games.get("rounds"), start=1):
         newRoundMetadata = RoundsMetadata(
             id_league_mtd=rounds_games.get("id_metadata"),
-            round=roundNumber,
-            status= 'completed' if roundGame.get(roundNumber) == gamesPerRound else 'incomplet'
+            round=roundGame.get("round"),
+            played=roundGame.get("games_played")
         )
         dbConnection.execute_orm(newRoundMetadata)
 
 
-def fixtures_to_collect():
+def att_rounds_brasileirao():
+    from database.connection import DatabaseConnection
+    from database.models.mtd.mtd_rounds_model import RoundsMetadata
+
     dbConnection = DatabaseConnection()
-    leaguesMetadata = dbConnection.leagues_metadata()
-    round_games = {}
+    leagueMetadata = dbConnection.leagues_metadata(71)
 
-    idLeague = leaguesMetadata.get("id_league")
-    seasonLeague = leaguesMetadata.get("season")
-    gamesRound = leaguesMetadata.get("games_round")
+    idLeague = leagueMetadata.get("id_league")
+    seasonLeague = actual_season()
+    idMetadata = leagueMetadata.get("id_metadata")
 
-    rounds: list[dict[int:int]] = round_games.get("rounds")
-    fixturesId = []
-    for idx, roundPlayed in enumerate(rounds):
-        roundNumber = idx + 1
-        if roundPlayed.get(roundNumber) != gamesRound:
-            roundsInQuery = dbConnection.execute(games_round(roundNumber, idLeague, seasonLeague))
-            for roundToCollect in roundsInQuery:
-                fixturesId.append(roundToCollect[0])
+    roundsIncomplet = dbConnection.incomplet_rounds_metadata(idMetadata)
+    roundsPlayed = dbConnection.fixtures_played_round(idLeague, seasonLeague)
 
-    return fixturesId
+    for roundIncomplet in roundsIncomplet.get("rounds"):
+        actualRound = roundIncomplet.get("round")
+        gamesPlayed = roundIncomplet.get("games_played")
+        for roundInDb in roundsPlayed:
+            actualRoundInDb = roundInDb.get("round")
+            if (actualRound == actualRoundInDb):
+                gamesPlayedInActualRoundInDb = roundInDb.get("games_played")
+                if (gamesPlayedInActualRoundInDb != gamesPlayed):
+                    session = dbConnection.local_session()
+                    attRoundMetadata = session.execute(select(RoundsMetadata).filter_by(id_league_mtd=idMetadata, round=actualRoundInDb)).scalar_one()
+                    attRoundMetadata.played = gamesPlayedInActualRoundInDb
+                    session.commit()
+                    session.close()
