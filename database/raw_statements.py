@@ -18,3 +18,9 @@ def games_round(round:int, id_league:int, season:int):
     and l.season = {season}
     and cast(replace("round",'Regular Season -', '') as integer) = {round}
     """
+
+def incompleted_rounds_metadata(id_league_mtd:int):
+    return f"""select mr.* from mtd.rounds mr inner join mtd.leagues ml on ml.id = mr.id_league_mtd where mr.status != 'completed' and mr.id_league_mtd = {id_league_mtd}"""
+
+def leagues_metadata(id_league:int):
+    return f"""select fl.id_league,ml.* from mtd.leagues ml inner join ftd.leagues fl on fl.id = ml.id_league where ml.status = true and fl.id_league = {id_league}"""
