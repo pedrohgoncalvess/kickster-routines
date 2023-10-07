@@ -5,10 +5,12 @@ from typing import Optional
 from sqlalchemy.orm import relationship
 from typing import List
 from database.models.declarative_base import Base
-from database.models.players_model import PlayersStats
-from database.models.teams_model import TeamsFixturesStats
-from database.models.teams_model import TeamsCardsStats
-from database.models.teams_model import TeamsGoalsStats
+from database.models.ftd.ftd_players_model import PlayersStats
+from database.models.ftd.ftd_teams_model import TeamsFixturesStats
+from database.models.ftd.ftd_teams_model import TeamsCardsStats
+from database.models.ftd.ftd_teams_model import TeamsGoalsStats
+from database.models.ftd.ftd_teams_model import TeamsSquad
+from database.models.ftd.ftd_fixtures_model import Fixtures
 
 
 class Leagues(Base):
