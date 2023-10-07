@@ -5,8 +5,11 @@ from typing import Optional, List
 from sqlalchemy.orm import relationship
 from database.models.declarative_base import Base
 from sqlalchemy import types
+from database.models.ftd.ftd_leagues_model import Leagues
+from database.models.ftd.ftd_teams_model import Teams
+from database.models.ftd.ftd_players_model import Players
 
-class Metadata(Base):
+class LeaguesMetadata(Base):
     __tablename__ = "leagues"
     __table_args__ = {"schema": "mtd"}
 
@@ -16,6 +19,7 @@ class Metadata(Base):
     total_rounds: Mapped[int] = mapped_column(Integer, nullable=False)
     games_round: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[bool] = mapped_column(Boolean, nullable=True)
-    updated_at: Mapped[Optional[types.DateTime]] = mapped_column(String(20), nullable=True, default=func.now())
+    created_at: Mapped[Optional[types.DateTime]] = mapped_column(String(20), nullable=True, default=func.now())
 
     fk_metadata_league: Mapped["Leagues"] = relationship(back_populates="metadata_league_fk")
+    fk_metadata_rounds: Mapped[List["RoundsMetadata"]] = relationship(back_populates="metadata_league_round_fk")
