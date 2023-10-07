@@ -26,7 +26,7 @@ class Leagues(Base):
     end_league: Mapped[int] = mapped_column(Integer, nullable=False)
     logo: Mapped[Optional[str]] = mapped_column(String(250), nullable=False)
 
-    metadata_league_fk: Mapped[List["Metadata"]] = relationship(back_populates="fk_metadata_league")
+    metadata_league_fk: Mapped[List["LeaguesMetadata"]] = relationship(back_populates="fk_metadata_league")
     league_fixture: Mapped[List["Fixtures"]] = relationship(back_populates="fixture_league")
     league_player_stat_fk: Mapped[List["PlayersStats"]] = relationship(back_populates="player_stat_league_fk")
     league_team_fixture_stat_fk: Mapped[List["TeamsFixturesStats"]] = relationship(back_populates="team_fixture_stat_league_fk")

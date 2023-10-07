@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 from database.models.declarative_base import Base
 from sqlalchemy import types
 from database.models.leagues_model import Leagues
-from database.models.stadiums_model import Stadiums
 
 
 class Fixtures(Base):
@@ -38,6 +37,7 @@ class Fixtures(Base):
     fixture_stat_fk: Mapped[List["FixturesStats"]] = relationship(back_populates="fixture_fk")
     fk_fixture_event: Mapped[List["FixturesEvents"]] = relationship(back_populates="fixture_event_fk")
     fk_fixture_lineup: Mapped[List["FixturesLineups"]] = relationship(back_populates="fixture_lineup_fk")
+    metadata_fixture_fk: Mapped[List["FixturesMetadata"]] = relationship(back_populates="fk_metadata_fixture")
 
 
 class FixturesEvents(Base):

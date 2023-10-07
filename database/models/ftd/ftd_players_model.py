@@ -1,4 +1,4 @@
-from sqlalchemy import Numeric, Boolean, Integer, String, ForeignKey
+from sqlalchemy import Numeric, Boolean, Integer, String, ForeignKey, func
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from typing import Optional, List
