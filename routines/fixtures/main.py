@@ -1,9 +1,9 @@
-from routines.fixtures.metadata import check_rounds_brasileirao, insert_metadata, att_rounds_brasileirao
+from routines.fixtures.metadata import att_metadata_rounds_brasileirao, insert_metadata, att_rounds_brasileirao
 from routines.fixtures.routine import collect_fixture, fixtures_to_collect, update_fixture
 
 
 def main():
-    roundsChecked = check_rounds_brasileirao()
+    roundsChecked = att_metadata_rounds_brasileirao()
     insert_metadata(roundsChecked)
     att_rounds_brasileirao()
     fixturesId = fixtures_to_collect(71)

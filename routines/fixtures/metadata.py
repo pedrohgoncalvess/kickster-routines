@@ -1,9 +1,10 @@
 from sqlalchemy import select
 from database.connection import DatabaseConnection
+from database.operations import dbOperations
 from configs import actual_season
 
 
-def check_rounds_brasileirao():
+def att_metadata_rounds_brasileirao():
     dbConnection = DatabaseConnection()
     leagueMetadata = dbConnection.leagues_metadata(71)
 
@@ -29,9 +30,6 @@ def check_rounds_brasileirao():
 
 def insert_metadata(rounds_games:dict[str:any]):
     from database.models.mtd.mtd_rounds_model import RoundsMetadata
-    from database.connection import DatabaseConnection
-
-    dbConnection = DatabaseConnection()
 
     for roundNumber, roundGame in enumerate(rounds_games.get("rounds"), start=1):
         newRoundMetadata = RoundsMetadata(
@@ -39,7 +37,7 @@ def insert_metadata(rounds_games:dict[str:any]):
             round=roundGame.get("round"),
             played=roundGame.get("games_played")
         )
-        dbConnection.execute_orm(newRoundMetadata)
+        dbOperations.save_object(newRoundMetadata)
 
 
 def att_rounds_brasileirao():
