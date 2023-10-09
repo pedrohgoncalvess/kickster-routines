@@ -1,10 +1,11 @@
-from sqlalchemy import Integer, String, ForeignKey, func, Boolean
+from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy.orm import relationship
 from database.models.declarative_base import Base
 from sqlalchemy import types
+from database.models.ftd.ftd_fixtures_model import Fixtures
 
 class FixturesMetadata(Base):
     __tablename__ = "fixtures"

@@ -6,6 +6,7 @@ from sqlalchemy.orm import relationship
 from typing import List
 from database.models.declarative_base import Base
 from database.models.ftd.ftd_stadiums_model import Stadiums
+from database.models.ftd.ftd_players_model import PlayersStats
 
 class Teams(Base):
     __tablename__ = "teams"

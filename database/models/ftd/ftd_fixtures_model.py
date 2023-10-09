@@ -5,8 +5,7 @@ from typing import Optional, List
 from sqlalchemy.orm import relationship
 from database.models.declarative_base import Base
 from sqlalchemy import types
-from database.models.mtd.mtd_fixtures_model import FixturesMetadata
-
+from database.models.ftd.ftd_teams_model import Teams
 
 class Fixtures(Base):
     __tablename__ = "fixtures"

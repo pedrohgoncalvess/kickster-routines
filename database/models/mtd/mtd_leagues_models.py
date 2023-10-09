@@ -5,9 +5,7 @@ from typing import Optional, List
 from sqlalchemy.orm import relationship
 from database.models.declarative_base import Base
 from sqlalchemy import types
-from database.models.ftd.ftd_leagues_model import Leagues
-from database.models.ftd.ftd_teams_model import Teams
-from database.models.ftd.ftd_players_model import Players
+from database.models.mtd.mtd_rounds_model import RoundsMetadata
 
 class LeaguesMetadata(Base):
     __tablename__ = "leagues"
