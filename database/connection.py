@@ -25,16 +25,6 @@ class DatabaseConnection:
     def local_session(self):
         return Session(self.__engine__)
 
-    def execute_orm(self, objectToSave):
-        session = self.local_session()
-        try:
-            session.add(objectToSave)
-            session.commit()
-        except Exception as error:
-            print(error)
-        finally:
-            session.close()
-
 
     def leagues_metadata(self, id_league: int = 71):
         from database.raw_statements import leagues_metadata
