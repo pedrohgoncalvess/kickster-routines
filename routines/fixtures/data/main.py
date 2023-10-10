@@ -1,10 +1,10 @@
 from database.operations import dbOperations
-from routines.fixtures_infos.routine import add_fixture_stat, add_fixture_events, add_fixture_lineups
+from routines.fixtures.fixtures_infos.routine import add_fixture_stat, add_fixture_events, add_fixture_lineups
 
 
 def main():
     from database.raw_statements import query_fixtures_infos_metadata
-    from routines.fixtures_infos.routine import fixtures_metadata_att
+    from routines.fixtures.fixtures_infos.routine import fixtures_metadata_att
 
     fixtures_metadata_att()
 

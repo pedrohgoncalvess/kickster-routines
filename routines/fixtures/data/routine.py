@@ -31,8 +31,8 @@ def fixtures_metadata_att():
 
 def add_fixture_stat(id_fixture: int):
     from api_sports.api_requests import APIRequest
-    from routines.fixtures_infos.parser import fixture_stats_parser
-    from routines.fixtures_infos.generator import generator_fixture_stats
+    from routines.fixtures.fixtures_infos.parser import fixture_stats_parser
+    from routines.fixtures.fixtures_infos.generator import generator_fixture_stats
 
     req = APIRequest()
 
@@ -45,8 +45,8 @@ def add_fixture_stat(id_fixture: int):
 
 def add_fixture_events(id_fixture:int):
     from api_sports.api_requests import APIRequest
-    from routines.fixtures_infos.parser import fixture_events_parser
-    from routines.fixtures_infos.generator import generator_fixture_event
+    from routines.fixtures.fixtures_infos.parser import fixture_events_parser
+    from routines.fixtures.fixtures_infos.generator import generator_fixture_event
 
     req = APIRequest()
     fixtureEventRaw = req.fixture_events(id_fixture)
@@ -64,8 +64,8 @@ def add_fixture_events(id_fixture:int):
 
 def add_fixture_lineups(id_fixture:int):
     from api_sports.api_requests import APIRequest
-    from routines.fixtures_infos.parser import fixture_lineup_parser
-    from routines.fixtures_infos.generator import generator_fixture_lineup
+    from routines.fixtures.fixtures_infos.parser import fixture_lineup_parser
+    from routines.fixtures.fixtures_infos.generator import generator_fixture_lineup
 
     req = APIRequest()
     fixtureLineUpRaw = req.fixture_lineups(id_fixture)
